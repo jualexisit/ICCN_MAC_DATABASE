@@ -8,6 +8,7 @@ class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("\nSYSTEM TEST WORKS\n\n");
 	}
 
 }
