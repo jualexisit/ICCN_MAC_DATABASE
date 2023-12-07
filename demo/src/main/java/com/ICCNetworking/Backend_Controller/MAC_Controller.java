@@ -74,34 +74,59 @@ public final class MAC_Controller {
             throw e;
         }
         
-
         return ResponseEntity.status(respItem.getStatus()).body(respItem);
     }
 
+
+    // insert a group of macs
     @PutMapping("/mac/insert_block")
     public ResponseEntity<macResp> insertMACBlock(
-        @RequestBody Optional<Integer> mac_block,
-        @RequestBody Optional<String> vendor
+        @RequestParam Optional<Integer> mac_block,
+        @RequestParam Optional<String> vendor
     ) throws FileNotFoundException, Exception
     {
+
+        // first, do value checks before doing computations
+        if (mac_block.isEmpty())
+        {
+            throw new Exception("Number of Macs not specificed");
+        }
+        if (vendor.isEmpty())
+        {
+            throw new Exception("Vendor of Macs not specificed");
+        }
+
+        // check if the number of macs requested is legal
+        BigInteger currentPtr = MAC_Controller.getMACPtr();
+        if (!helper.checkRange(
+             BigInteger.valueOf(mac_block.get()).add(currentPtr)))
+        {
+            throw new Exception("ICCN does not have enough MACs for you." +
+            "Please Contact the parent company.");
+        }
+
         macResp respItem = new macResp().setMac(1);
         respItem.setStatus(200);
 
         Timestamp timestamp = Timestamp.from(Instant.now());
 
+        
+        // create a loop that adds every MAC to the database individually
+
         for (Integer i = 0; i < mac_block.get() ; i++)
         {
             System.out.println(BigInteger.valueOf(i.intValue()));
+            System.out.println(BigInteger.valueOf(i.intValue()).add(currentPtr));
             
-            /*
-            insertMACSQL(
+            /*insertMACSQL(
                 MAC_Controller.getMACPtr().add(BigInteger.valueOf(i.intValue())),
                 vendor.get(), 
-                timestamp);
-            */
+                timestamp);*/
+            
         }
 
-
+        // Finally, set the static ptr to its new value
+        setMACPtr(BigInteger.valueOf(mac_block.get()).add(currentPtr));
 
         return ResponseEntity.status(respItem.getStatus()).body(respItem);
     }

@@ -7,10 +7,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.ICCNetworking.Backend_Controller.dataBase.macDataRepo;
@@ -31,6 +33,29 @@ public class sql_helper {
         stream.close();
 
         return mac;
+    }
+
+    public BigInteger checkSQLMACPtrDatabase(macDataRepo repo) throws Exception
+    {
+        String sql = 
+            "SELECT mac_id FROM mac_ptr" +
+            "WHERE mac_name = 'current_mac';";
+            
+        try
+        {
+            BigInteger mac_ptr = repo.getnTemplate().queryForObject(sql,
+                new MapSqlParameterSource() ,
+                BigInteger.class);
+        
+        
+            System.out.println(mac_ptr);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to find location, in the database");
+        }
+
+        return BigInteger;
     }
     
 
